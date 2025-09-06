@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/addons/p5.sound.min.js"></script>
+    <link rel="icon" href="sudoku.png" type="image/png" />
+    <title>Sudoku solver</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <main>
+      <!-- <div id="container"> -->
+      <p id="header">Sudoku solver</p>
+      <div id="sudokuDiv"></div>
+      <div id="buttonDiv">
+        <button
+          type="button"
+          onclick="importSudoku(prompt('Enter sudoku string'))"
+        >
+          Import
+        </button>
+        <button type="button" onclick="initSudoku()">Clear</button>
+        <button type="button">Solve</button>
+        <button type="button" onclick="alert(exportSudoku())">Export</button>
+      </div>
+      <!-- </div> -->
+    </main>
+
+    <script src="helper.js"></script>
+    <script src="canvas.js"></script>
+  </body>
+</html>
