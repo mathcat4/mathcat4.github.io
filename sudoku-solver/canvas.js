@@ -3,6 +3,8 @@ let size, gridSize, sqSize;
 let selected = false;
 let selectedInd = 0;
 
+let illegalInds = [];
+
 let heldKey = null;
 let heldFrames = 0;
 const SPACE = 32;
@@ -15,6 +17,7 @@ const COLOR = {
   lightblue: "#9696ff",
   darkblue1: "rgba(20, 50, 130, 0.2)",
   darkblue2: "rgba(20, 50, 130, 0.8)",
+  red: "rgba(130, 50, 20, 0.8)",
 };
 
 let mSudoku, sudokuCanvas;
@@ -41,8 +44,13 @@ function draw() {
   }
 
   if (selected) {
+    illegalInds = [];
     highlightSquare(selectedInd, COLOR.darkblue2);
   }
+
+  illegalInds.forEach((ind) => {
+    highlightSquare(ind, COLOR.red);
+  });
 
   drawSudoku();
 }
@@ -159,5 +167,17 @@ function keyPressed() {
     } else if (keyCode == BACKSPACE || keyCode == DELETE) {
       mSudoku[selectedInd] = 0;
     }
+  }
+}
+
+function solveButton() {
+  [verify, inds] = verifySudoku(mSudoku, graph);
+  if (verify) {
+    [valid, mSudoku] = solve(mSudoku, graph);
+    if (!valid) {
+      illegalInds = [...Array(81).keys()];
+    }
+  } else {
+    illegalInds = inds;
   }
 }

@@ -65,6 +65,16 @@ function solverDraw() {
   }
 }
 
+function verifySudoku(sudoku, graph) {
+  illegal = [];
+  for (let ind = 0; ind < 81; ind++) {
+    if (getNeighbours(sudoku, ind, graph).has(sudoku[ind])) {
+      illegal.push(ind);
+    }
+  }
+  return [illegal.length == 0, illegal];
+}
+
 function printSudoku(sudoku) {
   let string = sudoku
     .join(" ")
@@ -81,7 +91,7 @@ function solve(sudoku, graph) {
     }
   }
   if (sInds.length == 0) {
-    return sudoku;
+    return [true, sudoku];
   }
   [neighbours, sInd] = sInds.sort((a, b) => b[0].size - a[0].size)[0];
 
@@ -91,12 +101,12 @@ function solve(sudoku, graph) {
     let nSudoku = sudoku.slice(0);
     nSudoku[sInd] = nNum;
 
-    solSudoku = solve(nSudoku, graph);
-    if (solSudoku) {
-      return solSudoku;
+    [valid, solSudoku] = solve(nSudoku, graph);
+    if (valid) {
+      return [true, solSudoku];
     }
   }
-  return false;
+  return [false, sudoku];
 }
 
 // testEncoded = "000000000600009100007005002008002009006090030000340000100504020500006007400000003";
