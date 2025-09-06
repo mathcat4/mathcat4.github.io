@@ -16,11 +16,13 @@
       <div id="buttonDiv">
         <button
           type="button"
-          onclick="mSudoku = importSudoku(prompt('Enter sudoku string'))"
+          onclick="clearScreen(); mSudoku = importSudoku(prompt('Enter sudoku string'));"
         >
           Import
         </button>
-        <button type="button" onclick="mSudoku = initSudoku();">Clear</button>
+        <button type="button" onclick="clearScreen(); mSudoku = initSudoku();;">
+          Clear
+        </button>
         <button type="button" onclick="solveButton();">Solve</button>
         <button type="button" onclick="alert(exportSudoku(mSudoku));">
           Export

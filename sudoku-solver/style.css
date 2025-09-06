@@ -7,10 +7,11 @@ body {
 } */
 
 #header {
-  color: #9696ff;
+  color: #0a821e;
   font-family: Arial;
   font-size: 40px;
   margin: 10px;
+  font-weight: bold;
 }
 
 main {
@@ -22,7 +23,7 @@ main {
 #sudokuDiv {
   height: 400px;
   width: 400px;
-  border: 3px solid white;
+  border: 3px solid #d4d4d4;
   margin: 10px 10px 30px 10px;
 }
 
@@ -39,7 +40,7 @@ button {
   width: 150px;
   height: 50px;
   background-color: #0a561e;
-  color: white;
+  color: #d4d4d4;
   font-family: Arial;
   font-size: 24px;
   border: none;

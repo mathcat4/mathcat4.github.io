@@ -66,7 +66,7 @@ function solverDraw() {
 }
 
 function verifySudoku(sudoku, graph) {
-  illegal = [];
+  let illegal = [];
   for (let ind = 0; ind < 81; ind++) {
     if (getNeighbours(sudoku, ind, graph).has(sudoku[ind])) {
       illegal.push(ind);
@@ -93,7 +93,7 @@ function solve(sudoku, graph) {
   if (sInds.length == 0) {
     return [true, sudoku];
   }
-  [neighbours, sInd] = sInds.sort((a, b) => b[0].size - a[0].size)[0];
+  let [neighbours, sInd] = sInds.sort((a, b) => b[0].size - a[0].size)[0];
 
   const allNums = new Set(Array.from(new Array(9), (_, i) => i + 1));
 
@@ -101,7 +101,7 @@ function solve(sudoku, graph) {
     let nSudoku = sudoku.slice(0);
     nSudoku[sInd] = nNum;
 
-    [valid, solSudoku] = solve(nSudoku, graph);
+    let [valid, solSudoku] = solve(nSudoku, graph);
     if (valid) {
       return [true, solSudoku];
     }

@@ -4,6 +4,7 @@ let selected = false;
 let selectedInd = 0;
 
 let illegalInds = [];
+let solutionInds = [];
 
 let heldKey = null;
 let heldFrames = 0;
@@ -12,12 +13,12 @@ const SPACE = 32;
 let graph;
 
 const COLOR = {
-  foreground: "#ffffff",
+  foreground: "#d4d4d4",
   background: "#0a0f0f",
-  lightblue: "#9696ff",
-  darkblue1: "rgba(20, 50, 130, 0.2)",
-  darkblue2: "rgba(20, 50, 130, 0.8)",
-  red: "rgba(130, 50, 20, 0.8)",
+  lightblue: "#5555da",
+  darkblue1: "#14328233",
+  darkblue2: "#143282cc",
+  red: "#823214cc",
 };
 
 let mSudoku, sudokuCanvas;
@@ -44,7 +45,6 @@ function draw() {
   }
 
   if (selected) {
-    illegalInds = [];
     highlightSquare(selectedInd, COLOR.darkblue2);
   }
 
@@ -53,6 +53,7 @@ function draw() {
   });
 
   drawSudoku();
+  // solverDraw();
 }
 
 // Helpers
@@ -81,7 +82,13 @@ function drawSudoku() {
     for (let col = 0; col < 9; col++) {
       if (mSudoku[toInd(row, col)] != 0) {
         strokeWeight(0);
-        fill(COLOR.foreground);
+
+        if (solutionInds.includes(toInd(row, col))) {
+          fill(COLOR.lightblue);
+        } else {
+          fill(COLOR.foreground);
+        }
+
         textSize(0.65 * sqSize);
         textAlign(CENTER, CENTER);
         text(
@@ -158,6 +165,11 @@ function windowResized() {
 
 function mouseClicked() {
   [selected, selectedInd] = getSquare([mouseX, mouseY]);
+
+  if (selected) {
+    illegalInds = [];
+    solutionInds = [];
+  }
 }
 
 function keyPressed() {
@@ -171,13 +183,25 @@ function keyPressed() {
 }
 
 function solveButton() {
-  [verify, inds] = verifySudoku(mSudoku, graph);
+  let [verify, inds] = verifySudoku(mSudoku, graph);
   if (verify) {
-    [valid, mSudoku] = solve(mSudoku, graph);
-    if (!valid) {
+    let [valid, solSudoku] = solve(mSudoku, graph);
+    if (valid) {
+      for (let ind = 0; ind < 81; ind++) {
+        if (mSudoku[ind] === 0) {
+          solutionInds.push(ind);
+        }
+      }
+      mSudoku = solSudoku.slice(0);
+    } else {
       illegalInds = [...Array(81).keys()];
     }
   } else {
     illegalInds = inds;
   }
+}
+
+function clearScreen() {
+  illegalInds = [];
+  solutionInds = [];
 }
