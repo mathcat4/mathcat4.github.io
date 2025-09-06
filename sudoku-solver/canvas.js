@@ -1,11 +1,13 @@
 let size, gridSize, sqSize;
 
 let selected = false;
-let selectedPos = [0, 0];
+let selectedInd = 0;
 
 let heldKey = null;
 let heldFrames = 0;
 const SPACE = 32;
+
+let graph;
 
 const COLOR = {
   foreground: "#ffffff",
@@ -13,11 +15,9 @@ const COLOR = {
   lightblue: "#9696ff",
   darkblue1: "rgba(20, 50, 130, 0.2)",
   darkblue2: "rgba(20, 50, 130, 0.8)",
-  // cDarkgreen1: (10, 70, 30),
-  // cDarkgreen2: (10, 130, 30),
 };
 
-let sudoku, sudokuCanvas;
+let mSudoku, sudokuCanvas;
 
 // Game loop
 
@@ -26,20 +26,22 @@ function setup() {
   sudokuCanvas = createCanvas(gridSize, gridSize);
   sudokuCanvas.parent("sudokuDiv");
   sudokuCanvas.id("sudoku");
-  initSudoku();
+
+  mSudoku = initSudoku();
+  graph = getGraph();
 }
 
 function draw() {
   background(COLOR.background);
   checkKeyDown();
 
-  [onGrid, curPos] = getSquare([mouseX, mouseY]);
+  [onGrid, curInd] = getSquare([mouseX, mouseY]);
   if (onGrid) {
-    highlightSquare(curPos, COLOR.darkblue1);
+    highlightSquare(curInd, COLOR.darkblue1);
   }
 
   if (selected) {
-    highlightSquare(selectedPos, COLOR.darkblue2);
+    highlightSquare(selectedInd, COLOR.darkblue2);
   }
 
   drawSudoku();
@@ -69,13 +71,13 @@ function drawSudoku() {
 
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
-      if (sudoku[row][col] != 0) {
+      if (mSudoku[toInd(row, col)] != 0) {
         strokeWeight(0);
         fill(COLOR.foreground);
-        textSize(0.8 * sqSize);
+        textSize(0.65 * sqSize);
         textAlign(CENTER, CENTER);
         text(
-          sudoku[row][col].toString(),
+          mSudoku[toInd(row, col)].toString(),
           sqSize * (col + 1 / 2),
           sqSize * (row + 1 / 2)
         );
@@ -84,10 +86,11 @@ function drawSudoku() {
   }
 }
 
-function highlightSquare(pos, col) {
+function highlightSquare(ind, col) {
+  const cor = toCor(ind);
   fill(col);
   strokeWeight(0);
-  square(sqSize * pos[1], sqSize * pos[0], sqSize);
+  square(sqSize * cor[1], sqSize * cor[0], sqSize);
 }
 
 function getSquare(pos) {
@@ -96,7 +99,7 @@ function getSquare(pos) {
   if (!(0 <= nx && nx <= gridSize && 0 <= ny && ny <= gridSize)) {
     return [false, [0, 0]];
   }
-  return [true, [floor(ny / sqSize), floor(nx / sqSize)]];
+  return [true, toInd(floor(ny / sqSize), floor(nx / sqSize))];
 }
 
 function checkKeyDown() {
@@ -127,43 +130,15 @@ function checkKeyDown() {
 }
 
 function moveSelection(curKeyCode) {
-  if (curKeyCode == UP_ARROW && selectedPos[0] > 0) {
-    selectedPos[0]--;
+  if (curKeyCode == UP_ARROW) {
+    selectedInd = max(selectedInd - 9, selectedInd % 9);
   } else if ([RIGHT_ARROW, ENTER, SPACE].includes(curKeyCode)) {
-    if (selectedPos[1] < 8) {
-      selectedPos[1]++;
-    } else if (selectedPos[0] < 8) {
-      selectedPos = [selectedPos[0] + 1, 0];
-    }
-  } else if (curKeyCode == DOWN_ARROW && selectedPos[0] < 8) {
-    selectedPos[0] = selectedPos[0] + 1;
+    selectedInd = min(selectedInd + 1, 80);
+  } else if (curKeyCode == DOWN_ARROW) {
+    selectedInd = min(selectedInd + 9, (selectedInd % 9) + 72);
   } else if (curKeyCode == LEFT_ARROW) {
-    if (selectedPos[1] > 0) {
-      selectedPos[1]--;
-    } else if (selectedPos[0] > 0) {
-      selectedPos = [selectedPos[0] - 1, 8];
-    }
+    selectedInd = max(0, selectedInd - 1);
   }
-}
-
-function exportSudoku() {
-  return sudoku.map((row) => row.join("")).join("");
-}
-
-function importSudoku(encoded) {
-  if (!/^\d+$/.test(encoded) || encoded.length != 81) {
-    console.error("Invalid sudoku string");
-  } else {
-    for (let row = 0; row < 9; row++) {
-      for (let col = 0; col < 9; col++) {
-        sudoku[row][col] = Number(encoded[9 * row + col]);
-      }
-    }
-  }
-}
-
-function initSudoku() {
-  sudoku = Array.from({ length: 9 }, () => Array(9).fill(0));
 }
 
 // Events
@@ -174,15 +149,15 @@ function windowResized() {
 }
 
 function mouseClicked() {
-  [selected, selectedPos] = getSquare([mouseX, mouseY]);
+  [selected, selectedInd] = getSquare([mouseX, mouseY]);
 }
 
 function keyPressed() {
   if (selected) {
     if ("123456789".includes(key)) {
-      sudoku[selectedPos[0]][selectedPos[1]] = Number(key);
+      mSudoku[selectedInd] = Number(key);
     } else if (keyCode == BACKSPACE || keyCode == DELETE) {
-      sudoku[selectedPos[0]][selectedPos[1]] = 0;
+      mSudoku[selectedInd] = 0;
     }
   }
 }

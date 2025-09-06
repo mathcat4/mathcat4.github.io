@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/p5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/addons/p5.sound.min.js"></script>
     <link rel="icon" href="sudoku.png" type="image/png" />
     <title>Sudoku solver</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
@@ -17,18 +16,23 @@
       <div id="buttonDiv">
         <button
           type="button"
-          onclick="importSudoku(prompt('Enter sudoku string'))"
+          onclick="mSudoku = importSudoku(prompt('Enter sudoku string'))"
         >
           Import
         </button>
-        <button type="button" onclick="initSudoku()">Clear</button>
-        <button type="button">Solve</button>
-        <button type="button" onclick="alert(exportSudoku())">Export</button>
+        <button type="button" onclick="mSudoku = initSudoku()">Clear</button>
+        <button type="button" onclick="mSudoku = solve(mSudoku, graph)">
+          Solve
+        </button>
+        <button type="button" onclick="alert(exportSudoku(mSudoku))">
+          Export
+        </button>
       </div>
       <!-- </div> -->
     </main>
 
     <script src="helper.js"></script>
     <script src="canvas.js"></script>
+    <script src="solver.js"></script>
   </body>
 </html>
